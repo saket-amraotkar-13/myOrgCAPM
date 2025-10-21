@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A simple CAP project.",
   "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^3",
+    "@sap-cloud-sdk/http-client": "^3.26.4",
+    "@sap-cloud-sdk/resilience": "^3",
     "@sap/cds": "^9",
     "express": "^4"
   },
@@ -13,28 +16,21 @@
     "start": "cds-serve"
   },
   "cds": {
-  "requires": {
-    "[development]":{
-      "auth": {
-        "kind": "mocked",
-        "users": {
-          "user1":{
-            "attr":{
-              "name": "Saket"
-            },
-            "roles":[ "Adopter" ]
-          },
-          "user2": {
-            "roles": [ "Adopter" ]
-          },
-          "user3": {
-            "roles": [ "Admin" ],
-            "password": "initial"
-          }
+    "requires": {
+      "[production]": {
+        "auth": {
+          "kind": "mocked"
+        }
+      },
+      "northwind": {
+        "kind": "odata-v2",
+        "model": "srv/external/northwind",
+        "credentials": {
+          "destination": "Northwind",
+          "path": "/v2/northwind/northwind.svc"
         }
       }
     }
-  }
   },
   "private": true
 }
