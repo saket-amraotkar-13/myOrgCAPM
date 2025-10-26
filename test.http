@@ -1,0 +1,26 @@
+### get EmployeeSet
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet
+
+
+### Post EMP
+
+POST http://localhost:4004/odata/v4/my-org/EmployeeSet
+Content-Type: application/json
+
+{      
+      "createdAt": "2025-10-19T10:30:00.000Z",
+      "createdBy": "admin",
+      "modifiedAt": "2025-10-19T11:00:00.000Z",
+      "modifiedBy": "manager",
+      "FirstName": "Sam",
+      "Age":66,
+      "LastName": "Jane",
+      "Salary": 5000,
+      "Role": "IT Engineer",            
+      "yrsOfExperience": "10",
+      "Address": "Dusky Lane",
+      "Country_code": "US",
+      "City": "Austin",
+      "Department_ID": "d1c5a240-5d9c-11ee-8c99-0242ac120002",
+      "FavProduct": "Chai"
+    }

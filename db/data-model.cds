@@ -12,20 +12,19 @@ using {
     }
 
     entity EmployeeSet : cuid, managed {
-        FirstName     : String;
-        LastName : String;
-        Age: String;
-        Salary: String;
+        FirstName     : String @title: 'First Name';
+        LastName : String @title: 'Last Name';
+        Age: Integer @assert.range.min: 0;
+        Salary: Integer @assert.range.min: 0;
         Role: String;
         Taxable: Boolean;
         SrCitizen: Boolean;
-        yrsOfExperience: String;
+        yrsOfExperience: Integer @assert.range.min: 0;
         Address: String;
         Country: Association to Countries;
         City: String;
         Department: Association to DepartmentSet;
-        dependents: Composition of many EmpDependentSet on dependents.OrgEmployee = $self;
-        CountDependent: String;
+        dependents: Composition of many EmpDependentSet on dependents.OrgEmployee = $self;        
         FavProduct:String;
         MediaDoc: Composition of many AttachmentSet on MediaDoc.EmployeeFile = $self;
     }
@@ -49,6 +48,5 @@ using {
         
         @Core.ContentDisposition.Filename: filename
         filename: String;
-
     }
 

@@ -1,9 +1,16 @@
 code,name,descr
-US,United States,Country in North America known for its diverse economy and technology sector
-UK,United Kingdom,Country in Europe comprising England, Scotland, Wales, and Northern Ireland
-IN,India,Country in South Asia known for its IT and service industry
-CA,Canada,Country in North America known for its natural resources and multicultural society
-SG,Singapore,City-state in Southeast Asia known for finance and technology
-AU,Australia,Country and continent known for mining, tourism, and education
-DE,Germany,Country in Europe known for engineering and manufacturing
-ES,Spain,Country in Europe known for culture, tourism, and architecture
+US,United States,Country in North America
+DE,Germany,Country in Central Europe
+FR,France,Country in Western Europe
+IN,India,Country in South Asia
+JP,Japan,Country in East Asia
+CN,China,Country in East Asia
+BR,Brazil,Country in South America
+GB,United Kingdom,Country in Northern Europe
+CA,Canada,Country in North America
+AU,Australia,Country in Oceania
+ZA,South Africa,Country in Southern Africa
+IT,Italy,Country in Southern Europe
+ES,Spain,Country in Southwestern Europe
+RU,Russia,Country spanning Eastern Europe and Northern Asia
+MX,Mexico,Country in North America

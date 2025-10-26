@@ -1,17 +1,34 @@
 code,locale,name,descr
-US,en,United States,Country in North America known for its diverse economy and technology sector
-US,de,Vereinigte Staaten,Land in Nordamerika mit vielfältiger Wirtschaft und Technologie
-UK,en,United Kingdom,Country in Europe comprising England, Scotland, Wales, and Northern Ireland
-UK,de,Vereinigtes Königreich,Land in Europa bestehend aus England, Schottland, Wales und Nordirland
-IN,en,India,Country in South Asia known for its IT and service industry
-IN,de,Indien,Land in Südasien bekannt für seine IT- und Dienstleistungsbranche
-CA,en,Canada,Country in North America known for its natural resources and multicultural society
-CA,fr,Canada,Pays d’Amérique du Nord connu pour ses ressources naturelles et sa société multiculturelle
-SG,en,Singapore,City-state in Southeast Asia known for finance and technology
-SG,zh,新加坡,东南亚的城市国家，以金融和科技著称
-AU,en,Australia,Country and continent known for mining, tourism, and education
-AU,de,Australien,Land und Kontinent bekannt für Bergbau, Tourismus und Bildung
-DE,en,Germany,Country in Europe known for engineering and manufacturing
-DE,de,Deutschland,Land in Europa bekannt für Ingenieurwesen und Industrie
-ES,en,Spain,Country in Europe known for culture, tourism, and architecture
-ES,es,España,País europeo conocido por su cultura, turismo y arquitectura
+US,en,United States,Country in North America
+US,de,Vereinigte Staaten,Land in Nordamerika
+US,fr,États-Unis,Pays en Amérique du Nord
+DE,en,Germany,Country in Central Europe
+DE,de,Deutschland,Land in Mitteleuropa
+DE,fr,Allemagne,Pays en Europe centrale
+FR,en,France,Country in Western Europe
+FR,de,Frankreich,Land in Westeuropa
+FR,fr,France,Pays en Europe occidentale
+IN,en,India,Country in South Asia
+IN,de,Indien,Land in Südasien
+IN,fr,Inde,Pays en Asie du Sud
+JP,en,Japan,Country in East Asia
+JP,de,Japan,Land in Ostasien
+JP,fr,Japon,Pays en Asie de l'Est
+CN,en,China,Country in East Asia
+CN,de,China,Land in Ostasien
+CN,fr,Chine,Pays en Asie de l'Est
+BR,en,Brazil,Country in South America
+BR,de,Brasilien,Land in Südamerika
+BR,fr,Brésil,Pays en Amérique du Sud
+GB,en,United Kingdom,Country in Northern Europe
+GB,de,Vereinigtes Königreich,Land in Nordeuropa
+GB,fr,Royaume-Uni,Pays en Europe du Nord
+CA,en,Canada,Country in North America
+CA,de,Kanada,Land in Nordamerika
+CA,fr,Canada,Pays en Amérique du Nord
+AU,en,Australia,Country in Oceania
+AU,de,Australien,Land in Ozeanien
+AU,fr,Australie,Pays en Océanie
+ZA,en,South Africa,Country in Southern Africa
+ZA,de,Südafrika,Land im südlichen Afrika
+ZA,fr,Afrique du Sud,Pays en Afrique australe
