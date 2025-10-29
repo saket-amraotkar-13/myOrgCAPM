@@ -81,11 +81,17 @@ class MyOrgService extends cds.ApplicationService {
     });
 
     // ==================================================
-    // 🟢 BEFORE CREATE/UPDATE: Validation + Logic
+    // 🟢 BEFORE CREATE/UPDATE EMPLOYEESET: Validation + Logic
     // ==================================================
     this.before(['CREATE', 'UPDATE'], 'EmployeeSet', async (req) => {
-      const { Age, FirstName, LastName, Salary, FavProduct } = req.data;
+      const { ID, Age, FirstName, LastName, Salary, FavProduct } = req.data;
 
+
+      // Safely extract Department ID from association or foreign key
+      let Department_ID = req.data.Department_ID;
+      if (!Department_ID && req.data.Department && req.data.Department.ID) {
+        Department_ID = req.data.Department.ID;
+      }
       // Collect validation errors
       const errors = [];
 
@@ -143,6 +149,19 @@ class MyOrgService extends cds.ApplicationService {
           errors.push(`FavProduct '${FavProduct}' does not exist in Products.`);
         }
       }
+      // --- Validate Department existence ---
+      if (Department_ID) {
+        const department = await SELECT.one
+          .from('myorg.db.DepartmentSet')
+          .columns('ID')
+          .where({ ID: Department_ID });
+
+        if (!department) {
+          errors.push(`Department with ID '${Department_ID}' does not exist.`);
+        }
+      } else {
+        errors.push('Department_ID is required.');
+      }
 
       // --- Capture logged-in user for change log ---
       const userId = req.user?.id || 'anonymous';
@@ -158,6 +177,129 @@ class MyOrgService extends cds.ApplicationService {
       }
 
     });
+
+    /// ==================================================
+    // 🔵 BEFORE CREATE/UPDATE: EmpDependentSet — Auto Fetch Employee LastName
+    // ==================================================
+    this.before(['CREATE', 'UPDATE'], 'EmpDependentSet', async (req) => {
+      const { OrgEmployee_ID, DepdFirstName, DepdLastName, ID } = req.data;
+
+      const errors = [];
+
+      // --- Validate OrgEmployee_ID existence ---
+      if (!OrgEmployee_ID) {
+        errors.push('Employee reference (OrgEmployee_ID) is required.');
+      }
+
+      // --- Fetch Employee LastName ---
+      let employee;
+      if (OrgEmployee_ID) {
+        employee = await SELECT.one
+          .from('myorg.db.EmployeeSet')
+          .columns('FirstName', 'LastName')
+          .where({ ID: OrgEmployee_ID });
+
+        if (!employee) {
+          errors.push(`No Employee found with ID '${OrgEmployee_ID}'.`);
+        } else {
+          // 🟢 Automatically set DepdLastName = Employee.LastName
+          req.data.DepdLastName = employee.LastName;
+        }
+      }
+
+      // --- Validate First Name ---
+      if (!DepdFirstName || DepdFirstName.trim() === '') {
+        errors.push('Dependent First Name is required.');
+      }
+
+      // --- Check duplicate (same dependent for same employee) ---
+      if (OrgEmployee_ID && DepdFirstName && req.data.DepdLastName) {
+        const whereClause = {
+          OrgEmployee_ID: OrgEmployee_ID,
+          DepdFirstName: DepdFirstName.trim(),
+          DepdLastName: req.data.DepdLastName.trim(),
+        };
+
+        if (req.event === 'UPDATE' && ID) {
+          whereClause.ID = { '!=': ID };
+        }
+
+        const existing = await SELECT.from('myorg.db.EmpDependentSet')
+          .columns('ID')
+          .where(whereClause)
+          .limit(1);
+
+        if (existing.length > 0) {
+          errors.push(
+            `Dependent '${DepdFirstName} ${req.data.DepdLastName}' already exists for this employee.`
+          );
+        }
+      }
+
+      // --- Stop processing if errors exist ---
+      if (errors.length > 0) {
+        req.error(400, errors.join(' '));
+      }
+    });
+
+    // ==================================================
+    // 🟢 BEFORE CREATE/UPDATE DEPARTMENTSET: Avoid Duplicates
+    // ==================================================
+    this.before(['CREATE', 'UPDATE', 'DELETE'], 'DepartmentSet', async (req) => {
+
+      const { ID, DepartName, DepartmentCode ,AdminPWD } = req.data;
+      const errors = [];
+
+      // --- Validate AdminPWD ---
+      if (!AdminPWD || AdminPWD.trim() !== 'Admin123') {
+        req.error(403, '❌ Invalid Admin password. You are not authorized to create or update a Department.');
+        return;
+      }
+
+      // --- Skip further validations if DELETE (only password check needed) ---
+      if (req.event === 'DELETE') {
+        return;
+      }
+
+      // --- Validate mandatory fields ---
+      if (!DepartName || DepartName.trim() === '') errors.push('Department Name is required.');
+      if (!DepartmentCode || DepartmentCode.trim() === '') errors.push('Department Code is required.');
+
+      // --- Check for duplicates ---
+      if (DepartName && DepartmentCode) {
+        const whereClause = {
+          DepartName: DepartName.trim(),
+          DepartmentCode: DepartmentCode.trim(),
+        };
+
+        // Exclude same record when updating
+        if (req.event === 'UPDATE' && ID) {
+          whereClause.ID = { '!=': ID };
+        }
+
+        const existing = await SELECT.from('myorg.db.DepartmentSet')
+          .columns('ID')
+          .where(whereClause)
+          .limit(1);
+
+        if (existing.length > 0) {
+          errors.push(
+            `Department '${DepartName}' with code '${DepartmentCode}' already exists.`
+          );
+        }
+      }
+
+      // --- Capture logged-in user ---
+      const userId = req.user?.id || 'anonymous';
+      if (req.event === 'CREATE') req.data.createdBy = userId;
+      req.data.modifiedBy = userId;
+
+      // --- Stop processing if errors exist ---
+      if (errors.length > 0) {
+        req.error(400, errors.join(' '));
+      }
+    });
+
 
     //return the init
     return super.init();

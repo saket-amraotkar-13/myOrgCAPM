@@ -5,14 +5,29 @@ using { northwind as nw } from '../srv/external/northwind';
 
 service MyOrgService {
 
-    entity DepartmentSet as projection on mydb.DepartmentSet;
-    entity EmployeeSet as projection on mydb.EmployeeSet{
-         *,
+    entity DepartmentSet as projection on mydb.DepartmentSet{
+        *,
         @Core.Computed: false
-        virtual numberOfDependent : Integer
+        virtual AdminPWD : String
     };
-    entity EmpDependentSet as projection on mydb.EmpDependentSet;
-    entity AttachmentSet as projection on mydb.AttachmentSet;
+    entity EmployeeSet as projection on mydb.EmployeeSet {
+        *,       
+        @Core.Computed: false
+        virtual numberOfDependent : Integer,
+        dependents : redirected to EmpDependentSet,    // ✅ expose composition
+        MediaDoc   : redirected to AttachmentSet,      // ✅ expose attachments
+    };
+
+    entity EmpDependentSet as projection on mydb.EmpDependentSet {
+        *,
+        OrgEmployee : redirected to EmployeeSet        // ✅ allow reverse navigation
+    };
+
+    entity AttachmentSet as projection on mydb.AttachmentSet {
+        *,
+        EmployeeFile : redirected to EmployeeSet
+    };
+
     
     //declare entity with fields from external source
 @path: 'service/sdk'

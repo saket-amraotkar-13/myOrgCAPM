@@ -1,9 +1,14 @@
 ### get EmployeeSet
 GET http://localhost:4004/odata/v4/my-org/EmployeeSet
 
+### get EmployeeSet with empid
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet(ID='emp1c240-5d9b-11ee-8c99-0242ac120001')
+
+
+### get EmployeeSet with filter with dependents
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet('emp1c240-5d9b-11ee-8c99-0242ac120001')/dependents
 
 ### Post EMP
-
 POST http://localhost:4004/odata/v4/my-org/EmployeeSet
 Content-Type: application/json
 
@@ -21,6 +26,106 @@ Content-Type: application/json
       "Address": "Dusky Lane",
       "Country_code": "US",
       "City": "Austin",
-      "Department_ID": "d1c5a240-5d9c-11ee-8c99-0242ac120002",
-      "FavProduct": "Chai"
+      "Department_ID": "d1c5a240-5d9c-11ee-8c99-0242ac120001",
+      "FavProduct": "Chai"      
     }
+
+### get Dependent of emp
+GET http://localhost:4004/odata/v4/my-org/EmpDependentSet
+
+### get one dependent
+GET http://localhost:4004/odata/v4/my-org/EmpDependentSet('demp1c40-5d9b-11ee-8c99-0242ac120001')
+
+### Get dependent for specific employee
+GET http://localhost:4004/odata/v4/my-org/EmpDependentSet?filter=(OrgEmployee_ID eq 'emp1c240-5d9b-11ee-8c99-0242ac120001')
+
+###CREATE DEPENDENT of employee
+POST http://localhost:4004/odata/v4/my-org/EmpDependentSet
+Content-Type: application/json
+
+{
+     "ID": "demp1c40-5d9b-11ee-8c99-0242ac120002",
+      "createdAt": "2025-10-19T10:30:00.000Z",
+      "createdBy": "admin",
+      "modifiedAt": "2025-10-19T11:00:00.000Z",
+      "modifiedBy": "manager",
+      "DepdFirstName": "Kiara",
+      "DepdLastName": "Amraotkar",
+      "Depdage": "6",
+      "relationship": "Daughter",
+      "OrgEmployee_ID": "emp2e580-5d9b-11ee-8c99-0242ac120002"      
+}
+
+### get dept
+GET http://localhost:4004/odata/v4/my-org/DepartmentSet
+
+### get dept with key
+GET http://localhost:4004/odata/v4/my-org/DepartmentSet('d1c5a240-5d9c-11ee-8c99-0242ac120001')
+
+
+### Create dept
+POST http://localhost:4004/odata/v4/my-org/DepartmentSet
+Content-Type: application/json
+
+{  
+  "DepartName": "Sales Force",
+  "DepartmentCode": "Sales Force",
+  "AdminPWD": "Admin123"
+}
+
+### Update dept
+PUT http://localhost:4004/odata/v4/my-org/DepartmentSet('d3c5a240-5d9c-11ee-8c99-0242ac120001')
+Content-Type: application/json
+
+{  
+  "DepartName": "Sales Force 12",
+  "DepartmentCode": "Sales Force 12",
+  "AdminPWD": "Admin123"
+}
+
+### DELETE dept
+DELETE  http://localhost:4004/odata/v4/my-org/DepartmentSet('d3c5a240-5d9c-11ee-8c99-0242ac120001')
+Content-Type: application/json
+
+{  
+  "AdminPWD": "Admin123"
+}
+
+
+### get files
+GET http://localhost:4004/odata/v4/my-org/AttachmentSet
+
+
+### post file
+POST http://localhost:4004/odata/v4/my-org/AttachmentSet
+Content-Type: application/json
+
+{
+     "mediaType": "pdf",
+    "filename" : "sample.pdf",
+    "EmployeeFile_ID": "emp1c240-5d9b-11ee-8c99-0242ac120001"
+}
+
+
+### put content
+PUT http://localhost:4004/odata/v4/my-org/AttachmentSet('26a0ee19-192a-427a-9df7-64dd7f06a45a')/content
+Content-Type: application/pdf
+
+< ../sample.pdf
+
+###get all attachment for employee
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet('emp1c240-5d9b-11ee-8c99-0242ac120001')/MediaDoc
+
+### get expanded entity for dependeds 
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet?$expand=dependents
+
+### get attachments with employee details
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet?$expand=MediaDoc
+
+### get expanded entity for dependeds with attachemnts
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet?$expand=dependents,MediaDoc
+
+
+
+### get expanded entity for dependeds with attachemnts for specific employee
+GET http://localhost:4004/odata/v4/my-org/EmployeeSet('emp1c240-5d9b-11ee-8c99-0242ac120001')?$expand=dependents,MediaDoc
