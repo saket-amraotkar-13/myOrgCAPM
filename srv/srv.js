@@ -1,5 +1,6 @@
 const cds = require('@sap/cds');
-// const { executeHttpRequest} = require("@sap-cloud-sdk/http-client");
+const { executeHttpRequest } = require("@sap-cloud-sdk/http-client");
+const { readCredential } = require('./credStore');
 
 //extend the Application service
 class MyOrgService extends cds.ApplicationService {
@@ -18,24 +19,24 @@ class MyOrgService extends cds.ApplicationService {
       return nws.run(req.query);
     });
 
-    //Call External API as Function - Option 1    
-    // this.on('getProducts', async (req) => {
-    //     try{
-    //         let oResponse = await executeHttpRequest(
-    //             {
-    //                 destinationName: "Northwind",
-    //             },
-    //             {
-    //                 method: "get",
-    //                 "url": "/v2/northwind/northwind.svc/Products",
-    //             }
-    //         );
-    //         let data = oResponse.data.d.results;
-    //         return data;
-    //     } catch (oError){
-    //         console.log(oError);
-    //     }
-    // });
+    // Call External API as Function - Option 2 using sap cloud sdk/http client    
+    this.on('READ','CustomerSet', async (req) => {
+        try{
+            let oResponse = await executeHttpRequest(
+                {
+                    destinationName: "Northwind",
+                },
+                {
+                    method: "get",
+                    "url": "/v2/northwind/northwind.svc/Customers",
+                }
+            );
+            let data = oResponse.data.d.results;
+            return data;
+        } catch (oError){
+            console.log(oError);
+        }
+    });
 
     // ==========================================================================
     // Function External API Function Products: Northwind API Connection for Products
@@ -250,8 +251,23 @@ class MyOrgService extends cds.ApplicationService {
       const { ID, DepartName, DepartmentCode ,AdminPWD } = req.data;
       const errors = [];
 
+      // --- 🔒 Read actual Admin password from BTP Credential Store ---
+      let storedAdminPwd;
+        try {
+          storedAdminPwd = await readCredential("MyOrgCredentials", "password", "AdminPassword");
+          if (!storedAdminPwd) {
+            req.error(500, "❌ Failed to read Admin password from Credential Store.");
+            return;
+          }
+        } catch (err) {
+          console.error("❌ Error reading credential:", err.message);
+          req.error(500, "❌ Error while reading Admin password from Credential Store.");
+          return;
+        }
+
+
       // --- Validate AdminPWD ---
-      if (!AdminPWD || AdminPWD.trim() !== 'Admin123') {
+      if (!AdminPWD || AdminPWD.trim() !== storedAdminPwd.trim()) {
         req.error(403, '❌ Invalid Admin password. You are not authorized to create or update a Department.');
         return;
       }
@@ -300,6 +316,21 @@ class MyOrgService extends cds.ApplicationService {
       }
     });
 
+  // ==================================================
+  // 🟢 Read Cred Store
+  // ==================================================
+
+    // fnReadCredStore 
+    this.on('fnReadCredStore', async (req) => {
+        try {
+          const res = await readCredential("MyOrgCredentials", "password", "AdminPassword");
+          console.log("✅ Read credential:", res);
+          return [ `Read successfull for AdminPassword: ${res ? 'value found' : 'no value'}` ,res];
+        } catch (error) {
+          console.error("❌ Read failed:", error.message);
+          return [ `Read failed: ${error.message}` ];
+        }
+      });
 
     //return the init
     return super.init();

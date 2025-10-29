@@ -28,7 +28,21 @@ service MyOrgService {
         EmployeeFile : redirected to EmployeeSet
     };
 
-    
+    function fnReadCredStore() returns array of String;
+
+    entity CustomerSet  {
+      CustomerID: String;
+      CompanyName: String;
+      ContactName: String;
+      ContactTitle: String;
+      Address: String;
+      City: String;
+      Region: String;
+      PostalCode: String;
+      Country: String;
+      Phone: String;
+      Fax: String;
+    }
     //declare entity with fields from external source
 @path: 'service/sdk'
     entity ProductSet as projection on nw.Products{

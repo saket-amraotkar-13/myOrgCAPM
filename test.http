@@ -74,7 +74,7 @@ Content-Type: application/json
 }
 
 ### Update dept
-PUT http://localhost:4004/odata/v4/my-org/DepartmentSet('d3c5a240-5d9c-11ee-8c99-0242ac120001')
+PUT http://localhost:4004/odata/v4/my-org/DepartmentSet('a8efa4f8-c7a0-405c-ad93-2b71c8e6366f')
 Content-Type: application/json
 
 {  
@@ -84,10 +84,10 @@ Content-Type: application/json
 }
 
 ### DELETE dept
-DELETE  http://localhost:4004/odata/v4/my-org/DepartmentSet('d3c5a240-5d9c-11ee-8c99-0242ac120001')
+DELETE  http://localhost:4004/odata/v4/my-org/DepartmentSet(ID='7616a1c2-3b03-4e91-be62-83a65772a1f6')
 Content-Type: application/json
 
-{  
+{
   "AdminPWD": "Admin123"
 }
 
