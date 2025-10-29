@@ -29,9 +29,9 @@ service MyOrgService {
     };
 
     function fnReadCredStore() returns array of String;
-
+    @cds.persistence.skip
     entity CustomerSet  {
-      CustomerID: String;
+     key CustomerID: String;
       CompanyName: String;
       ContactName: String;
       ContactTitle: String;
@@ -45,6 +45,7 @@ service MyOrgService {
     }
     //declare entity with fields from external source
 @path: 'service/sdk'
+    @cds.persistence.skip
     entity ProductSet as projection on nw.Products{
         key ProductID as ProductID,
         ProductName as ProductName,
