@@ -267,13 +267,19 @@ class MyOrgService extends cds.ApplicationService {
 
 
       // --- Validate AdminPWD ---
-      if (!AdminPWD || AdminPWD.trim() !== storedAdminPwd.trim()) {
-        req.error(403, '❌ Invalid Admin password. You are not authorized to create or update a Department.');
-        return;
-      }
+      // if (!AdminPWD || AdminPWD.trim() !== storedAdminPwd.trim()) {
+      //   req.error(403, '❌ Invalid Admin password. You are not authorized to create or update a Department.');
+      //   return;
+      // }
 
       // --- Skip further validations if DELETE (only password check needed) ---
       if (req.event === 'DELETE') {
+        const orAdminPWD  = req.headers.slug; 
+
+        if (!orAdminPWD || orAdminPWD !== storedAdminPwd) {
+        req.error(403, '❌ Invalid Admin password. You are not authorized to create or update a Department.');
+        return;
+      }
         return;
       }
 

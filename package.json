@@ -2,7 +2,7 @@
   "name": "myorg",
   "version": "1.0.0",
   "description": "A simple CAP project.",
-  "dependencies": {
+  "dependencies": {    
     "@sap-cloud-sdk/connectivity": "^3",
     "@sap-cloud-sdk/http-client": "^3.26.4",
     "@sap-cloud-sdk/resilience": "^3",

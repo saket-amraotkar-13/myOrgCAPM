@@ -60,7 +60,7 @@ Content-Type: application/json
 GET http://localhost:4004/odata/v4/my-org/DepartmentSet
 
 ### get dept with key
-GET http://localhost:4004/odata/v4/my-org/DepartmentSet('d1c5a240-5d9c-11ee-8c99-0242ac120001')
+GET http://localhost:4004/odata/v4/my-org/DepartmentSet('b5d1e365-7fb4-4967-85e5-167453fd59a2')
 
 
 ### Create dept
@@ -74,7 +74,7 @@ Content-Type: application/json
 }
 
 ### Update dept
-PUT http://localhost:4004/odata/v4/my-org/DepartmentSet('a8efa4f8-c7a0-405c-ad93-2b71c8e6366f')
+PUT http://localhost:4004/odata/v4/my-org/DepartmentSet('253014a6-7850-4e8e-8d71-5c83848a0f4c')
 Content-Type: application/json
 
 {  
@@ -84,12 +84,10 @@ Content-Type: application/json
 }
 
 ### DELETE dept
-DELETE  http://localhost:4004/odata/v4/my-org/DepartmentSet(ID='7616a1c2-3b03-4e91-be62-83a65772a1f6')
+DELETE  http://localhost:4004/odata/v4/my-org/DepartmentSet(ID='253014a6-7850-4e8e-8d71-5c83848a0f4c')
 Content-Type: application/json
+Slug: Admin123
 
-{
-  "AdminPWD": "Admin123"
-}
 
 
 ### get files
