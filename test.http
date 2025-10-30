@@ -127,3 +127,12 @@ GET http://localhost:4004/odata/v4/my-org/EmployeeSet?$expand=dependents,MediaDo
 
 ### get expanded entity for dependeds with attachemnts for specific employee
 GET http://localhost:4004/odata/v4/my-org/EmployeeSet('emp1c240-5d9b-11ee-8c99-0242ac120001')?$expand=dependents,MediaDoc
+
+
+### send Mail
+GET http://localhost:4004/odata/v4/my-org/sendEmail
+Content-Type: application/json
+
+{
+  "ID": "emp1c240-5d9b-11ee-8c99-0242ac120001"
+}

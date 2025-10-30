@@ -19,6 +19,7 @@ using {
         Role: String;
         Taxable: Boolean;
         SrCitizen: Boolean;
+        email: String;
         yrsOfExperience: Integer @assert.range.min: 0;
         Address: String;
         Country: Association to Countries;

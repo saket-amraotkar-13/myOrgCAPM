@@ -1,7 +1,8 @@
 const cds = require('@sap/cds');
 const { executeHttpRequest } = require("@sap-cloud-sdk/http-client");
 const { readCredential } = require('./credStore');
-
+const SapCfMailer = require("sap-cf-mailer").default;
+const ExcelJS = require("exceljs");
 //extend the Application service
 class MyOrgService extends cds.ApplicationService {
 
@@ -20,22 +21,22 @@ class MyOrgService extends cds.ApplicationService {
     });
 
     // Call External API as Function - Option 2 using sap cloud sdk/http client    
-    this.on('READ','CustomerSet', async (req) => {
-        try{
-            let oResponse = await executeHttpRequest(
-                {
-                    destinationName: "Northwind",
-                },
-                {
-                    method: "get",
-                    "url": "/v2/northwind/northwind.svc/Customers",
-                }
-            );
-            let data = oResponse.data.d.results;
-            return data;
-        } catch (oError){
-            console.log(oError);
-        }
+    this.on('READ', 'CustomerSet', async (req) => {
+      try {
+        let oResponse = await executeHttpRequest(
+          {
+            destinationName: "Northwind",
+          },
+          {
+            method: "get",
+            "url": "/v2/northwind/northwind.svc/Customers",
+          }
+        );
+        let data = oResponse.data.d.results;
+        return data;
+      } catch (oError) {
+        console.log(oError);
+      }
     });
 
     // ==========================================================================
@@ -248,22 +249,22 @@ class MyOrgService extends cds.ApplicationService {
     // ==================================================
     this.before(['CREATE', 'UPDATE', 'DELETE'], 'DepartmentSet', async (req) => {
 
-      const { ID, DepartName, DepartmentCode ,AdminPWD } = req.data;
+      const { ID, DepartName, DepartmentCode, AdminPWD } = req.data;
       const errors = [];
 
       // --- 🔒 Read actual Admin password from BTP Credential Store ---
       let storedAdminPwd;
-        try {
-          storedAdminPwd = await readCredential("MyOrgCredentials", "password", "AdminPassword");
-          if (!storedAdminPwd) {
-            req.error(500, "❌ Failed to read Admin password from Credential Store.");
-            return;
-          }
-        } catch (err) {
-          console.error("❌ Error reading credential:", err.message);
-          req.error(500, "❌ Error while reading Admin password from Credential Store.");
+      try {
+        storedAdminPwd = await readCredential("MyOrgCredentials", "password", "AdminPassword");
+        if (!storedAdminPwd) {
+          req.error(500, "❌ Failed to read Admin password from Credential Store.");
           return;
         }
+      } catch (err) {
+        console.error("❌ Error reading credential:", err.message);
+        req.error(500, "❌ Error while reading Admin password from Credential Store.");
+        return;
+      }
 
 
       // --- Validate AdminPWD ---
@@ -274,12 +275,12 @@ class MyOrgService extends cds.ApplicationService {
 
       // --- Skip further validations if DELETE (only password check needed) ---
       if (req.event === 'DELETE') {
-        const orAdminPWD  = req.headers.slug; 
+        const orAdminPWD = req.headers.slug;
 
         if (!orAdminPWD || orAdminPWD !== storedAdminPwd) {
-        req.error(403, '❌ Invalid Admin password. You are not authorized to create or update a Department.');
-        return;
-      }
+          req.error(403, '❌ Invalid Admin password. You are not authorized to create or update a Department.');
+          return;
+        }
         return;
       }
 
@@ -322,21 +323,136 @@ class MyOrgService extends cds.ApplicationService {
       }
     });
 
-  // ==================================================
-  // 🟢 Read Cred Store
-  // ==================================================
+    // ==================================================
+    // 🟢 Read Cred Store
+    // ==================================================
 
     // fnReadCredStore 
     this.on('fnReadCredStore', async (req) => {
-        try {
-          const res = await readCredential("MyOrgCredentials", "password", "AdminPassword");
-          console.log("✅ Read credential:", res);
-          return [ `Read successfull for AdminPassword: ${res ? 'value found' : 'no value'}` ,res];
-        } catch (error) {
-          console.error("❌ Read failed:", error.message);
-          return [ `Read failed: ${error.message}` ];
+      try {
+        const res = await readCredential("MyOrgCredentials", "password", "AdminPassword");
+        console.log("✅ Read credential:", res);
+        return [`Read successfull for AdminPassword: ${res ? 'value found' : 'no value'}`, res];
+      } catch (error) {
+        console.error("❌ Read failed:", error.message);
+        return [`Read failed: ${error.message}`];
+      }
+    });
+
+    // ==================================================
+    // 🟢 Send Email 
+    // ==================================================      
+    this.on('sendEmail', async (request, response) => {
+      const oReq = request.data.ID;
+      console.log(oReq);
+    
+      const employee = await SELECT.from('myorg.db.EmployeeSet').where({ ID: oReq });
+      if (!employee || employee.length === 0) 
+        {
+        return request.error(404, `❌ No employee found for ID: ${oReq}`);
+        
         }
-      });
+       const oEmail = employee[0].email
+       const emp = employee[0];
+      console.log(employee[0].email);
+// Create Excel workbook
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('employee');
+
+  // Define headers
+  worksheet.columns = Object.keys(emp).map(key => ({
+    header: key.charAt(0).toUpperCase() + key.slice(1),
+    key: key
+  }));
+
+  // Header styling
+  const headerRow = worksheet.getRow(1);
+  headerRow.eachCell(cell => {
+    cell.font = { bold: true, color: { argb: '#000000' } };
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '#FF0000' } };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+  });
+
+  // Add data rows
+  worksheet.addRows(employee);
+
+  // Auto-size columns
+  worksheet.columns.forEach(col => {
+    let maxLength = 0;
+    col.eachCell({ includeEmpty: true }, cell => {
+      const cellValue = cell.value ? cell.value.toString() : '';
+      maxLength = Math.max(maxLength, cellValue.length);
+    });
+    col.width = maxLength < 10 ? 10 : maxLength + 2;
+  });
+
+  // Convert to base64
+  const buffer = await workbook.xlsx.writeBuffer();
+  const base64Excel = buffer.toString('base64');
+
+try {
+
+            const transporter = new SapCfMailer("mail_destination"); //enter destination name
+            const htmlContent = `<!DOCTYPE html>
+                        <html>
+                        <body style="margin:0;padding:0;background:#f6f7fb;font-family:Arial,Helvetica,sans-serif;">
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f7fb;">
+                            <tr>
+                                <td align="center" style="padding:24px;">
+                                <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:12px;padding:24px;">
+                                    <tr>
+                                    <td>
+                                        <h2 style="margin:0 0 12px;font-size:20px;color:#111;">Hello SAP Developer 👋</h2>
+                                        <p style="margin:0 0 16px;color:#333;line-height:1.5;">
+                                        This is a quick test email from your SAP BTP CAP app. If you can read this, your mail setup works!
+                                        </p>
+                                        <p style="margin:0 0 24px;">
+                                        <a href="https://cap.cloud.sap/docs/" style="display:inline-block;text-decoration:none;padding:10px 16px;border-radius:8px;background:#2563eb;color:#fff;">
+                                            View Details
+                                        </a>
+                                        </p>
+                                        <p style="margin:0;color:#666;font-size:12px;">
+                                        — CAP Mailer • <span style="color:#999;">Do not reply</span>
+                                        </p>
+                                    </td>
+                                    </tr>
+                                </table>
+                                <p style="color:#999;font-size:12px;margin:12px 0 0;">© 2025 Your Company</p>
+                                </td>
+                            </tr>
+                            </table>
+                        </body>
+                        </html> 
+`;
+  
+  const result = await transporter.sendMail({
+                to: "saket.amraotkar@gmail.com",
+                cc: "",
+                subject: "Test Mail from BTP System",
+                html: htmlContent,
+                attachments:  [{
+                        filename: "myData.xlsx",
+                        content: base64Excel,
+                        encoding: "base64",
+                        contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    }]
+            });
+
+     return `Email sent successfully w`;
+
+        } catch (error) {
+            console.error('Error sending email:', error);
+            return `Error sending email: ${error.message}`;
+        }
+    });
+
+
 
     //return the init
     return super.init();

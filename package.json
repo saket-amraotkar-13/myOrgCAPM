@@ -2,15 +2,17 @@
   "name": "myorg",
   "version": "1.0.0",
   "description": "A simple CAP project.",
-  "dependencies": {    
+  "dependencies": {
     "@sap-cloud-sdk/connectivity": "^3",
     "@sap-cloud-sdk/http-client": "^3.26.4",
     "@sap-cloud-sdk/resilience": "^3",
     "@sap/cds": "^9",
     "@sap/xsenv": "^6.0.0",
+    "exceljs": "^4.4.0",
     "express": "^4",
     "node-fetch": "^2.7.0",
     "node-jose": "^2.2.0",
+    "sap-cf-mailer": "^0.0.5",
     "save": "^2.9.0"
   },
   "devDependencies": {

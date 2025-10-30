@@ -2,7 +2,6 @@
 using { myorg.db as mydb } from '../db/data-model';
 using { northwind as nw } from '../srv/external/northwind';
 
-
 service MyOrgService {
 
     entity DepartmentSet as projection on mydb.DepartmentSet{
@@ -56,4 +55,6 @@ service MyOrgService {
 
     //declare function to perform get operation specifically entity of external source
     function getProducts() returns array of String;
+
+    function sendEmail(ID: UUID) returns array of EmployeeSet;
 }
