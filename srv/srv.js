@@ -3,6 +3,8 @@ const { executeHttpRequest } = require("@sap-cloud-sdk/http-client");
 const { readCredential } = require('./credStore');
 const SapCfMailer = require("sap-cf-mailer").default;
 const ExcelJS = require("exceljs");
+const getEmailContent = require('./utils/emailTemplate'); // <-- imported here
+
 //extend the Application service
 class MyOrgService extends cds.ApplicationService {
 
@@ -398,43 +400,12 @@ class MyOrgService extends cds.ApplicationService {
 
 try {
 
-            const transporter = new SapCfMailer("mail_destination"); //enter destination name
-            const htmlContent = `<!DOCTYPE html>
-                        <html>
-                        <body style="margin:0;padding:0;background:#f6f7fb;font-family:Arial,Helvetica,sans-serif;">
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f7fb;">
-                            <tr>
-                                <td align="center" style="padding:24px;">
-                                <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:12px;padding:24px;">
-                                    <tr>
-                                    <td>
-                                        <h2 style="margin:0 0 12px;font-size:20px;color:#111;">Hello SAP Developer 👋</h2>
-                                        <p style="margin:0 0 16px;color:#333;line-height:1.5;">
-                                        This is a quick test email from your SAP BTP CAP app. If you can read this, your mail setup works!
-                                        </p>
-                                        <p style="margin:0 0 24px;">
-                                        <a href="https://cap.cloud.sap/docs/" style="display:inline-block;text-decoration:none;padding:10px 16px;border-radius:8px;background:#2563eb;color:#fff;">
-                                            View Details
-                                        </a>
-                                        </p>
-                                        <p style="margin:0;color:#666;font-size:12px;">
-                                        — CAP Mailer • <span style="color:#999;">Do not reply</span>
-                                        </p>
-                                    </td>
-                                    </tr>
-                                </table>
-                                <p style="color:#999;font-size:12px;margin:12px 0 0;">© 2025 Your Company</p>
-                                </td>
-                            </tr>
-                            </table>
-                        </body>
-                        </html> 
-`;
-  
-  const result = await transporter.sendMail({
+    const transporter = new SapCfMailer("mail_destination"); //enter destination name
+    const htmlContent = getEmailContent(emp);
+    const result = await transporter.sendMail({
                 to: "saket.amraotkar@gmail.com",
                 cc: "",
-                subject: "Employee Details Selected to Review",
+                subject: `Employee Details - ${emp.FirstName} ${emp.LastName}`,
                 html: htmlContent,
                 attachments:  [{
                         filename: "myData.xlsx",
