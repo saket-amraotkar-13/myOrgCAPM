@@ -434,7 +434,7 @@ try {
   const result = await transporter.sendMail({
                 to: "saket.amraotkar@gmail.com",
                 cc: "",
-                subject: "Test Mail from BTP System",
+                subject: "Employee Details Selected to Review",
                 html: htmlContent,
                 attachments:  [{
                         filename: "myData.xlsx",
