@@ -106,7 +106,7 @@ Content-Type: application/json
 
 
 ### put content
-PUT http://localhost:4004/odata/v4/my-org/AttachmentSet('26a0ee19-192a-427a-9df7-64dd7f06a45a')/content
+PUT http://localhost:4004/odata/v4/my-org/AttachmentSet('ff243c15-13a2-4a5a-8d3a-02c5a56b213e')/content
 Content-Type: application/pdf
 
 < ../sample.pdf

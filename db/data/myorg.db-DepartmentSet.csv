@@ -1,3 +1,3 @@
 ID,DepartName,DepartmentCode,createdAt,createdBy,modifiedAt,modifiedBy
-d1c5a240-5d9c-11ee-8c99-0242ac120001,SAP,SAP,2025-10-19T10:30:00Z,admin,2025-10-19T11:00:00Z,manager
-d2c5a240-5d9c-11ee-8c99-0242ac120002,Oracle,Oracle,2025-10-19T10:30:00Z,admin,2025-10-19T11:00:00Z,manager
+d89ca2e7-3404-4047-9534-febd95156ea5,SAP,SAP,2025-10-19T10:30:00Z,admin,2025-10-19T11:00:00Z,manager
+d89ca2e7-3404-4047-9534-febd95156ea6,Oracle,Oracle,2025-10-19T10:30:00Z,admin,2025-10-19T11:00:00Z,manager
